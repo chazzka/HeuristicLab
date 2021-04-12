@@ -47,6 +47,7 @@ ohodnocenaPopulace getLeader(std::vector<jedinec> population, int testFunction, 
     return {tempLeader, population};
 }
 
+//deprecated
 std::vector<double> generateRandom(int size, double min, double max)
 {
     std::vector<double> rndNumbers;

@@ -15,7 +15,7 @@
 #include "alg/PSO.cpp"
 
 //choose nickname for it
-const char* alg_name = "PSONovClassB";
+const char* alg_name = "PSONovClassA";
 Algorithm alg;
 
 
@@ -92,8 +92,6 @@ int main(int argc, char* argv[])
 {
 	std::cout << argv[0];
 	std::cout << "start" << std::endl;
-
-	srand((unsigned)time(0));
 
 	for (int dimensionSize : implementedDimensions)
 	{

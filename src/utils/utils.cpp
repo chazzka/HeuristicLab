@@ -1,12 +1,13 @@
 #include <vector>
 #include <set>
 #include <cmath>
+#include <random>
 
 namespace utils
 {
     namespace
     {
-        double getEuclideanDistance(const std::vector<double>& from, const std::vector<double>& to)
+        double getEuclideanDistance(const std::vector<double> &from, const std::vector<double> &to)
         {
             double sum = 0;
             for (size_t i = 0; i < from.size(); i++)
@@ -19,7 +20,17 @@ namespace utils
 
     double generateRandomDouble(double min, double max)
     {
-        return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
+        std::uniform_real_distribution<double> unif(min, max);
+        std::default_random_engine re;
+        return unif(re);
+    }
+
+    int generateRandomInt(int minIncluded, int maxIncluded)
+    {
+        std::random_device rd;
+        std::mt19937 rng(rd());
+        std::uniform_int_distribution<int> uni(minIncluded, maxIncluded);
+        return uni(rng);
     }
 
     std::vector<double> generateRandomRange(int size, double min, double max)
@@ -38,7 +49,7 @@ namespace utils
 
     //k - number of neihgbours
     //result - avg of distance Ro (bigger Ro = more unique)
-    double getRo(const std::vector<double>& current, const std::vector<std::vector<double>>& all, int k)
+    double getRo(const std::vector<double> &current, const std::vector<std::vector<double>> &all, int k)
     {
         std::multiset<double, std::less<double>> euclideanSet;
 
