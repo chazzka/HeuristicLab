@@ -54,7 +54,6 @@ namespace utils
         std::multiset<double, std::less<double>> euclideanSet;
 
         double sum = 0;
-        double ro = 0;
 
         for (size_t i = 0; i < all.size(); i++)
         {
@@ -63,7 +62,7 @@ namespace utils
 
         std::multiset<double>::iterator it = euclideanSet.begin();
         //begin from 1 - always ignore the first zero distance (self distance)
-        for (int i = 1; i <= k; ++i)
+        for (int i = 0; i <= k; ++i)
         {
             sum += *it++;
         }
