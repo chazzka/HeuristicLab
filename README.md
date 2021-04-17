@@ -22,9 +22,16 @@ cost - function evaluation value at current fez number
 HOW TO RUN TESTS:
 install bazel: https://bazel.build/
 
-`
-cd test
-bazel test //:your_test_file
-`
+run following command in root folder (do not forget three dots)
+
+```
+bazel test ...
+```
+
+or (for whole verbose output)
+
+```
+bazel test --test_output=all ...
+```
 
 for information about writing tests, visit: https://google.github.io/googletest/quickstart-bazel.html
