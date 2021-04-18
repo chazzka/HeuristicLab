@@ -10,14 +10,16 @@
 #include <sys/stat.h>
 #endif
 
+//INCLUDE LIBRARIES
+#include "utils/utils.cpp"
+#include "cec20_test_func.cpp"
 
 //INCLUDE ALGORITHM
 #include "alg/PSO.cpp"
 
 //choose nickname for it
-const char* alg_name = "PSONovClassA";
+const char *alg_name = "PSO";
 Algorithm alg;
-
 
 //CHOOSE NUMBER OF RUNS
 #define RUNS 10
@@ -38,8 +40,8 @@ std::map<std::string, int> algorithms{
 
 //OPTIONAL: COMMENT OUT DIMENSIONS YOU DON'T WANT TO RUN (tested are 10,20)
 const int implementedDimensions[] = {
-	5,
-	//10,
+	//5,
+	10,
 	//15,
 	//20,
 	//30,
@@ -50,7 +52,7 @@ const int implementedDimensions[] = {
 #define BOUNDARY_LOW -100
 #define BOUNDARY_UP 100
 
-void makeCSVfile(std::string filename, std::vector<std::vector<result>>& result, std::string algName)
+void makeCSVfile(std::string filename, std::vector<std::vector<result>> &result, std::string algName)
 {
 	std::ofstream file;
 	std::string folder = "csv/" + algName;
@@ -88,9 +90,8 @@ void makeCSVfile(std::string filename, std::vector<std::vector<result>>& result,
 
 int dimensionSize = 0;
 
-int main(int argc, char* argv[])
+int main()
 {
-	std::cout << argv[0];
 	std::cout << "start" << std::endl;
 
 	for (int dimensionSize : implementedDimensions)
