@@ -4,7 +4,7 @@ HOW TO RUN:
 Main file is src/Main.cpp
 - #include your algorithm at the top of the file following these rules:
 1. run function is ```vector<result> run(dimension, testFunctionNumber, boundaryLow, boundaryUp)```
-2. result is a struct containing: int fez, double cost.
+2. result is a struct containing: int fez, double cost. - implement in in your algorithm
 3. class name is Algorithm
 
 all the files are included in Main.cpp before compilation. Sufficient command should be:
