@@ -33,6 +33,15 @@ TEST(generateRandomRange, areItemsInRightDimensions)
     }
 }
 
+TEST(generateRandomRange, doItemsDiffer)
+{
+    std::vector<double> res = utils::generateRandomRange(10, 1, 100);
+    
+    EXPECT_NE(res[0], res[1]);
+    EXPECT_NE(res[3], res[4]);
+    
+}
+
 TEST(getRo, returnRo)
 {
     const std::vector<double> current = {1};

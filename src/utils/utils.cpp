@@ -18,13 +18,6 @@ namespace utils
         }
     }
 
-    double generateRandomDouble(double min, double max)
-    {
-        std::uniform_real_distribution<double> unif(min, max);
-        std::default_random_engine re;
-        return unif(re);
-    }
-
     int generateRandomInt(int minIncluded, int maxIncluded)
     {
         std::random_device rd;
@@ -33,15 +26,21 @@ namespace utils
         return uni(rng);
     }
 
+    double generateRandomDouble(double minIncluded, double maxIncluded)
+    {
+        std::random_device rd;
+        std::mt19937 rng(rd());
+        std::uniform_real_distribution<double> unif(minIncluded, maxIncluded);
+        return unif(rng);
+    }
+
     std::vector<double> generateRandomRange(int size, double min, double max)
     {
         std::vector<double> rndNumbers;
 
-        double randomNumber;
         for (int index = 0; index < size; index++)
         {
-            randomNumber = generateRandomDouble(min, max);
-            rndNumbers.push_back(randomNumber);
+            rndNumbers.push_back(generateRandomDouble(min, max));
         }
 
         return rndNumbers;
