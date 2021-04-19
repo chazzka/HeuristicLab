@@ -11,13 +11,7 @@ struct Particle
     std::vector<double> positionXi;
     std::vector<double> velocityVectorVi;
     std::vector<double> pBestPi;
-    double pBestCost;
-};
-
-struct GlobalBest
-{
-    std::vector<double> gPosition;
-    double gCost;
+    double bestCost;
 };
 
 class Algorithm
@@ -27,20 +21,25 @@ private:
     int singleDimensionFes_, popSize_, dimension_, testFunction_;
     double c1_, c2_, wStart_, wEnd_, w_, vMax_, boundaryLow_, boundaryUp_;
 
-    void initPopulation(std::vector<Particle> &population, GlobalBest &gBestParticle)
+    void initParticleRandom(Particle &p)
+    {
+        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
+        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+    }
+
+    void initPopulation(std::vector<Particle> &population, Particle &gBestParticle)
     {
         for (int i = 0; i < popSize_; i++)
         {
-            std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-            Particle p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
-            double pCost = 0;
-            cec20_test_func(p.pBestPi.data(), &pCost, dimension_, 1, testFunction_);
-            p.pBestCost = pCost;
+            Particle p;
+            initParticleRandom(p);
+
             //find best swarm position and cost
-            if (pCost < gBestParticle.gCost)
+            if (p.bestCost < gBestParticle.bestCost)
             {
-                gBestParticle.gPosition = p.pBestPi;
-                gBestParticle.gCost = pCost;
+                gBestParticle.positionXi = p.pBestPi;
+                gBestParticle.bestCost = p.bestCost;
             }
             population.push_back(p);
         }
@@ -65,12 +64,15 @@ public:
     {
     }
 
-    void dimensionMove(Particle &currentParticle, GlobalBest &gBestParticleParticle, int d)
+    void dimensionMove(Particle &currentParticle, Particle &gBestParticle, int d)
     {
         double rp = utils::generateRandomDouble(0, 1);
         double rg = utils::generateRandomDouble(0, 1);
 
-        double potentialVectorD = w_ * currentParticle.velocityVectorVi[d] + c1_ * rp * (currentParticle.pBestPi[d] - currentParticle.positionXi[d]) + c2_ * rg * (gBestParticleParticle.gPosition[d] - currentParticle.positionXi[d]);
+        double inertia = w_ * currentParticle.velocityVectorVi[d];
+        double attractionToSelf = c1_ * rp * (currentParticle.pBestPi[d] - currentParticle.positionXi[d]);
+        double attractionToBest = c2_ * rg * (gBestParticle.positionXi[d] - currentParticle.positionXi[d]);
+        double potentialVectorD = inertia + attractionToSelf + attractionToBest;
         //Update the particle's velocity
         double vParam = vMax_ * (boundaryUp_ - boundaryLow_);
         currentParticle.velocityVectorVi[d] = fmax(fmin(potentialVectorD, vParam), -vParam);
@@ -93,10 +95,8 @@ public:
         int fezCounter = 0;
         std::vector<Particle> population;
 
-        GlobalBest gBestParticle;
-        gBestParticle.gPosition = utils::generateRandomRange(dimensionsCount, boundaryLow, boundaryUp);
-        cec20_test_func(gBestParticle.gPosition.data(), &gBestParticle.gCost, dimensionsCount, 1, testFunction);
-
+        Particle gBestParticle;
+        initParticleRandom(gBestParticle);
         initPopulation(population, gBestParticle);
 
         for (int g = 0; g < generations; g++)
@@ -114,24 +114,21 @@ public:
                 cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimensionsCount, 1, testFunction);
                 fezCounter++;
 
-                if (newXiCost < currentParticle.pBestCost)
+                if (newXiCost < currentParticle.bestCost)
                 {
                     //Update the particle's best known position
                     currentParticle.pBestPi = currentParticle.positionXi;
-                    currentParticle.pBestCost = newXiCost;
+                    currentParticle.bestCost = newXiCost;
 
-                    if (newXiCost < gBestParticle.gCost)
+                    if (newXiCost < gBestParticle.bestCost)
                     {
                         //Update the swarm's best known position
-                        gBestParticle.gCost = newXiCost;
-                        gBestParticle.gPosition = currentParticle.positionXi;
+                        gBestParticle.bestCost = newXiCost;
+                        gBestParticle.positionXi = currentParticle.positionXi;
                     }
                 }
 
-                result res;
-                res.fez = fezCounter;
-                res.cost = gBestParticle.gCost;
-                best_results.push_back(res);
+                best_results.push_back({fezCounter, gBestParticle.bestCost});
             }
             //after generation run, recount w
             w_ = wStart_ - ((wStart_ - wEnd_) * g) / generations;

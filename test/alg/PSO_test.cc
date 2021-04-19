@@ -9,7 +9,7 @@ Algorithm pso(1,1,1,1,1,1,1,1,1,-5.12,5.12);
 TEST(dimensionMove, movedCorrectly)
 {
     Particle p = {{1}, {1}, {1}};
-    GlobalBest gp = {{2}, {2}};
+    Particle gp = {{2}, {2}};
     pso.dimensionMove(p, gp, 0);
     EXPECT_EQ(p.positionXi[0], 3);
 
@@ -18,7 +18,7 @@ TEST(dimensionMove, movedCorrectly)
 TEST(dimensionMove, isBackInDimension)
 {
     Particle p = {{1}, {10000}, {10000}};
-    GlobalBest gp = {{20000}, {0}};
+    Particle gp = {{20000}, {0}};
     pso.dimensionMove(p, gp, 0);
 
     ASSERT_LT(p.positionXi[0], 5.12);
