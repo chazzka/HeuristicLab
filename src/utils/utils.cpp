@@ -2,6 +2,7 @@
 #include <set>
 #include <cmath>
 #include <random>
+#include <assert.h>
 
 namespace utils
 {
@@ -50,6 +51,8 @@ namespace utils
     //result - avg of distance Ro (bigger Ro = more unique)
     double getRo(const std::vector<double> &current, const std::vector<std::vector<double>> &all, int k)
     {
+
+        assert(k <= all.size());
         std::multiset<double, std::less<double>> euclideanSet;
 
         double sum = 0;
