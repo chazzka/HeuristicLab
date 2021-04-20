@@ -1,59 +1,52 @@
+/*
+personal best se bude vybírat na základě novelty, global na základě účelovky
+*/
 #include <vector>
-#include "../utils/result.cpp"
-#include "../utils/utils.cpp"
-#include "../cec20_test_func.cpp"
+
+struct result
+{
+    int fez;
+    double cost;
+};
+
+struct Particle
+{
+    std::vector<double> positionXi;
+    std::vector<double> velocityVectorVi;
+    std::vector<double> pBestPi;
+    double bestCost;
+    double ro;
+    double bestRo;
+};
 
 class Algorithm
 {
+
 private:
     int neighboursK_, singleDimensionFes_, popSize_, dimension_, testFunction_;
     double c1_, c2_, wStart_, wEnd_, w_, vMax_, boundaryLow_, boundaryUp_;
 
-    struct Particle
+    void initParticleRandom(Particle &p)
     {
-        std::vector<double> positionXi;
-        std::vector<double> velocityVectorVi;
-        std::vector<double> pBestPi;
-        double pBestCost;
-        double ro;
-    };
-
-    void initPopulation(std::vector<Particle> &population, std::vector<double> &leadingPosG, double gCost, std::vector<std::vector<double>> &positions)
-    {
-        for (int i = 0; i < popSize_; i++)
-        {
-            std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-            positions.push_back(randomPosition);
-            //Initialize the particle's position with a uniformly distributed random vector xi ~ U(BOUNDARY_LOW, BOUNDARY_UP)
-            //Initialize the particle's velocity: vi ~ U(-|BOUNDARY_UP-BOUNDARY_LOW|, |BOUNDARY_UP-BOUNDARY_LOW|), maybe 0 would be better
-            //Initialize the particle's best known position to its initial position: pi ← xi
-            Particle p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
-            double pCost = 0;
-            cec20_test_func(p.pBestPi.data(), &pCost, dimension_, 1, testFunction_);
-            p.pBestCost = pCost;
-            //find best swarm position and cost
-            if (pCost < gCost)
-            {
-                //update the swarm's best known position: g ← pi
-                leadingPosG = p.pBestPi;
-                gCost = pCost;
-            }
-            population.push_back(p);
-        }
+        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
+        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
     }
 
-    void initRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions, Particle &mostUnique, double &biggestRo)
+    void initPopulation(std::vector<Particle> &population, Particle &gBestParticle)
     {
-        biggestRo = 0; //biggestRo is most unique
-
         for (int i = 0; i < popSize_; i++)
         {
-            population[i].ro = utils::getRo(population[i].positionXi, positions, neighboursK_);
-            if (population[i].ro > biggestRo)
+            Particle p;
+            initParticleRandom(p);
+
+            //find best swarm position and cost
+            if (p.bestCost < gBestParticle.bestCost)
             {
-                biggestRo = population[i].ro;
-                mostUnique = population[i];
+                gBestParticle.positionXi = p.pBestPi;
+                gBestParticle.bestCost = p.bestCost;
             }
+            population.push_back(p);
         }
     }
 
@@ -76,92 +69,125 @@ public:
     {
     }
 
-    std::vector<result> run(int dimension, int testFunction, double boundaryLow, double boundaryUp)
+    void dimensionMove(Particle &currentParticle, Particle &gBestParticle, int d)
     {
-        dimension_ = dimension;
+        double rp = utils::generateRandomDouble(0, 1);
+        double rg = utils::generateRandomDouble(0, 1);
+
+        double inertia = w_ * currentParticle.velocityVectorVi[d];
+        double attractionToSelf = c1_ * rp * (currentParticle.pBestPi[d] - currentParticle.positionXi[d]);
+        double attractionToBest = c2_ * rg * (gBestParticle.positionXi[d] - currentParticle.positionXi[d]);
+        double potentialVectorD = inertia + attractionToSelf + attractionToBest;
+        //Update the particle's velocity
+        double vParam = vMax_ * (boundaryUp_ - boundaryLow_);
+        currentParticle.velocityVectorVi[d] = fmax(fmin(potentialVectorD, vParam), -vParam);
+        //Update the particle's position
+        currentParticle.positionXi[d] = currentParticle.positionXi[d] + currentParticle.velocityVectorVi[d];
+
+        backToBoundaries(currentParticle, d);
+    }
+
+    void getPositions(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    {
+        positions.clear();
+
+        for (auto &particle : population)
+        {
+            positions.push_back(particle.positionXi);
+        }
+    }
+
+    void initRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
+    {
+        getPositions(population, positions);
+        mostUnique.ro = 0;
+
+        for (int i = 0; i < popSize_; i++)
+        {
+            double initialRo = utils::getRo(population[i].positionXi, positions, neighboursK_);
+            population[i].ro = initialRo;
+            population[i].bestRo = initialRo;
+            if (population[i].ro > mostUnique.ro)
+            {
+                mostUnique = population[i];
+            }
+        }
+    }
+
+    void recountRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
+    {
+
+        getPositions(population, positions);
+
+        for (int i = 0; i < popSize_; i++)
+        {
+            population[i].ro = utils::getRo(population[i].positionXi, positions, neighboursK_);
+            if (population[i].ro > population[i].bestRo)
+            {
+                population[i].bestRo = population[i].ro;
+            }
+            if (population[i].ro > mostUnique.ro)
+            {
+                mostUnique.ro = population[i].ro;
+                mostUnique = population[i];
+            }
+        }
+    }
+
+    std::vector<result> run(int dimensionsCount, int testFunction, double boundaryLow, double boundaryUp)
+    {
+        dimension_ = dimensionsCount;
         testFunction_ = testFunction;
         boundaryLow_ = boundaryLow;
         boundaryUp_ = boundaryUp;
-        int MAX_FEZ = singleDimensionFes_ * dimension;
+        int MAX_FEZ = singleDimensionFes_ * dimensionsCount;
         int generations = MAX_FEZ / popSize_;
 
         std::vector<result> best_results;
         int fezCounter = 0;
         std::vector<Particle> population;
-        std::vector<double> leadingPosG = utils::generateRandomRange(dimension, boundaryLow, boundaryUp);
-        double gCost = 0;
-        cec20_test_func(leadingPosG.data(), &gCost, dimension, 1, testFunction);
 
-        //positions will be used for novelty evaluation
+        Particle gBestParticle;
+        initParticleRandom(gBestParticle);
+        initPopulation(population, gBestParticle);
+
+        Particle mostUnique = population[0];
         std::vector<std::vector<double>> positions;
-        initPopulation(population, leadingPosG, gCost, positions);
-
-        Particle mostUnique;
-        double biggestRo = 0;
-        initRo(population, positions, mostUnique, biggestRo);
+        initRo(population, mostUnique, positions);
 
         for (int g = 0; g < generations; g++)
         {
             for (int i = 0; i < population.size(); i++)
             {
                 Particle &currentParticle = population[i];
-                //positions are being changed during this cycle, keep track of the most unique one
-                double currentBestRo = utils::getRo(currentParticle.positionXi, positions, neighboursK_);
-                if (currentBestRo > biggestRo)
+
+                for (int d = 0; d < dimensionsCount; d++)
                 {
-                    mostUnique = currentParticle;
+                    dimensionMove(currentParticle, gBestParticle, d);
                 }
 
-                for (int d = 0; d < dimension; d++)
-                {
-                    double rp = utils::generateRandomDouble(0, 1);
-                    double rg = utils::generateRandomDouble(0, 1);
-
-                    //get some random to go for novelty only in 1:X
-                    double noveltyRandom = utils::generateRandomDouble(0, 1);
-                    int novelty = 0;
-
-                    double potentialVectorD = 0;
-
-                    if (noveltyRandom > 0.2) // do classic
-                    {
-                        potentialVectorD = w_ * currentParticle.velocityVectorVi[d] + c1_ * rp * (currentParticle.pBestPi[d] - currentParticle.positionXi[d]) + c2_ * rg * (leadingPosG[d] - currentParticle.positionXi[d]);
-                    }
-                    else //do novelty
-                    {
-                        potentialVectorD = w_ * currentParticle.velocityVectorVi[d] + (mostUnique.positionXi[d] - currentParticle.positionXi[d]);
-                    }
-
-                    //Update the particle's velocity
-                    double vParam = vMax_ * (boundaryUp - boundaryLow);
-                    currentParticle.velocityVectorVi[d] = fmax(fmin(potentialVectorD, vParam), -vParam);
-                    //Update the particle's position
-                    currentParticle.positionXi[d] = currentParticle.positionXi[d] + currentParticle.velocityVectorVi[d];
-
-                    backToBoundaries(currentParticle, d);
-                }
                 double newXiCost = 0;
-                cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimension, 1, testFunction);
+                cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimensionsCount, 1, testFunction);
                 fezCounter++;
 
-                if (newXiCost < currentParticle.pBestCost)
+                //A - personal best se bude vybírat na základě novelty, global na základě účelovky
+                //pokud ta částice byla unikátnější než předtím, tak ji uprav pBest pozici a bestCost na newXiCost
+                double previousRo = currentParticle.bestRo;
+                recountRo(population, mostUnique, positions);
+                if (currentParticle.bestRo > previousRo)
                 {
-                    //Update the particle's best known position
                     currentParticle.pBestPi = currentParticle.positionXi;
-                    currentParticle.pBestCost = newXiCost;
-
-                    if (newXiCost < gCost)
-                    {
-                        //Update the swarm's best known position
-                        gCost = newXiCost;
-                        leadingPosG = currentParticle.positionXi;
-                    }
+                    currentParticle.bestCost = newXiCost;
                 }
 
-                result res;
-                res.fez = fezCounter;
-                res.cost = gCost;
-                best_results.push_back(res);
+                if (newXiCost < gBestParticle.bestCost)
+                {
+                    //Update the swarm's best known position
+                    gBestParticle.bestCost = newXiCost;
+                    gBestParticle.positionXi = currentParticle.positionXi;
+                }
+
+                best_results.push_back({fezCounter, gBestParticle.bestCost});
             }
             //after generation run, recount w
             w_ = wStart_ - ((wStart_ - wEnd_) * g) / generations;
