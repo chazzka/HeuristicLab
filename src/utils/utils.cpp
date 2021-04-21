@@ -17,6 +17,14 @@ namespace utils
             }
             return sqrt(sum);
         }
+
+        double getEuclideanDistance(double from, double to)
+        {
+
+            double sum = pow((to - from), 2);
+
+            return sqrt(sum);
+        }
     }
 
     int generateRandomInt(int minIncluded, int maxIncluded)
@@ -60,6 +68,37 @@ namespace utils
         for (size_t i = 0; i < all.size(); i++)
         {
             euclideanSet.insert(getEuclideanDistance(current, all[i]));
+        }
+
+        std::multiset<double>::iterator it = euclideanSet.begin();
+        //begin from 1 - always ignore the first zero distance (self distance)
+        for (int i = 0; i <= k; ++i)
+        {
+            sum += *it++;
+        }
+
+        if (k != 0)
+        {
+            return sum / k;
+        }
+        else
+            return 0;
+    }
+
+    //k - number of neihgbours
+    //d - dimension
+    //result - avg of distance Ro (bigger Ro = more unique)
+    double getRoOneDimension(const std::vector<double> &current, const std::vector<std::vector<double>> &all, int k, int d)
+    {
+
+        assert(k <= all.size());
+        std::multiset<double, std::less<double>> euclideanSet;
+
+        double sum = 0;
+
+        for (size_t i = 0; i < all.size(); i++)
+        {
+            euclideanSet.insert(getEuclideanDistance(current[d], all[i][d]));
         }
 
         std::multiset<double>::iterator it = euclideanSet.begin();
