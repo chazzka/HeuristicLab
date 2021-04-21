@@ -59,11 +59,20 @@ TEST(getRo, returnRo)
     EXPECT_EQ(res, 3);
 }
 
-TEST(getRoOneDimension, returnRo)
+TEST(getRoOneDimension0, returnRo)
 {
     const std::vector<double> current = {1, 2};
-    const std::vector<std::vector<double>> all = {{2, 50}, {1, 50}, {3, 50}, {7, 60}, {8, 20}, {9,100}};
+    const std::vector<std::vector<double>> all = {{2, 50}, {1, 50}, {3, 50}, {7, 60}, {8, 20}, {9, 100}};
     int k = 3;
     double res = utils::getRoOneDimension(current, all, k, 0);
+    EXPECT_EQ(res, 3);
+}
+
+TEST(getRoOneDimension1, returnRo)
+{
+    const std::vector<double> current = {2, 1};
+    const std::vector<std::vector<double>> all = {{50, 2}, {50, 1}, {50, 3}, {60, 7}, {20, 8}, {100, 9}};
+    int k = 3;
+    double res = utils::getRoOneDimension(current, all, k, 1);
     EXPECT_EQ(res, 3);
 }
