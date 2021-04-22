@@ -20,5 +20,17 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "PSONovBtests",
+    srcs = glob(["**/PSONovB_test.cc"]),
+    deps = [
+        "//src/alg:PSONovB",
+        "//src/utils:UtilsLib",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
+
+
 
 

@@ -14,14 +14,14 @@
 #include "cec20_test_func.cpp"
 
 //INCLUDE ALGORITHM
-#include "alg/PSO.cpp"
+#include "alg/PSONovC.cpp"
 
 //choose nickname for it
-const char *alg_name = "PSO";
+const char *alg_name = "PSONovC";
 Algorithm alg;
 
 //CHOOSE NUMBER OF RUNS
-#define RUNS 10
+#define RUNS 5
 
 //OPTIONAL: COMMENT OUT ALGORITHMS YOU DON'T WANT TO RUN
 std::map<std::string, int> algorithms{
@@ -39,8 +39,8 @@ std::map<std::string, int> algorithms{
 
 //OPTIONAL: COMMENT OUT DIMENSIONS YOU DON'T WANT TO RUN (tested are 10,20)
 const int implementedDimensions[] = {
-	//5,
-	10,
+	5,
+	//10,
 	//15,
 	//20,
 	//30,
@@ -85,6 +85,7 @@ void makeCSVfile(std::string filename, std::vector<std::vector<result>> &result,
 		file << tempRes.at(i) + "\n";
 	}
 	file.close();
+	std::cout << "created file" << std::endl;
 }
 
 int dimensionSize = 0;
