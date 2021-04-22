@@ -1,6 +1,3 @@
-/*
-personal best se bude vybírat na základě novelty, global na základě účelovky
-*/
 #include <vector>
 
 struct result
@@ -97,19 +94,24 @@ public:
         }
     }
 
-    void initRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    void initRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
     {
         getPositions(population, positions);
+        mostUnique.ro = 0;
 
         for (int i = 0; i < popSize_; i++)
         {
             double initialRo = utils::getRo(population[i].positionXi, positions, neighboursK_);
             population[i].ro = initialRo;
             population[i].bestRo = initialRo;
+            if (population[i].ro > mostUnique.ro)
+            {
+                mostUnique = population[i];
+            }
         }
     }
 
-    void recountRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    void recountRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
     {
 
         getPositions(population, positions);
@@ -120,6 +122,11 @@ public:
             if (population[i].ro > population[i].bestRo)
             {
                 population[i].bestRo = population[i].ro;
+            }
+            if (population[i].ro > mostUnique.ro)
+            {
+                mostUnique.ro = population[i].ro;
+                mostUnique = population[i];
             }
         }
     }
@@ -141,8 +148,9 @@ public:
         initParticleRandom(gBestParticle);
         initPopulation(population, gBestParticle);
 
+        Particle mostUnique = population[0];
         std::vector<std::vector<double>> positions;
-        initRo(population, positions);
+        initRo(population, mostUnique, positions);
 
         for (int g = 0; g < generations; g++)
         {
@@ -159,9 +167,10 @@ public:
                 cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimensionsCount, 1, testFunction);
                 fezCounter++;
 
-                //novelty
+                //A - personal best se bude vybírat na základě novelty, global na základě účelovky
+                //pokud ta částice byla unikátnější než předtím, tak ji uprav pBest pozici a bestCost na newXiCost
                 double previousRo = currentParticle.bestRo;
-                recountRo(population, positions);
+                recountRo(population, mostUnique, positions);
                 if (currentParticle.bestRo > previousRo)
                 {
                     currentParticle.pBestPi = currentParticle.positionXi;
