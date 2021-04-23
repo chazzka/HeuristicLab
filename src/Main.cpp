@@ -14,10 +14,10 @@
 #include "cec20_test_func.cpp"
 
 //INCLUDE ALGORITHM
-#include "alg/PSONovC.cpp"
+#include "alg/PSONovD.cpp"
 
 //choose nickname for it
-const char *alg_name = "PSONovC";
+const char *alg_name = "PSONovD";
 Algorithm alg;
 
 //CHOOSE NUMBER OF RUNS
@@ -31,7 +31,7 @@ std::map<std::string, int> algorithms{
 	{"Rosenbrock", 4},
 	{"HybridOne", 5},
 	{"HybridOneTwo", 6},
-	{"HybridOneThree", 7},
+//	{"HybridOneThree", 7},
 	{"CompositionOne", 8},
 	{"CompositionTwo", 9},
 	{"CompositionThree", 10},
