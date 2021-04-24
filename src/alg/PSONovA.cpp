@@ -33,23 +33,6 @@ private:
         cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
     }
 
-    void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
-    {
-        for (int i = 0; i < popSize_; i++)
-        {
-            Particle p;
-            initParticleRandom(p);
-
-            //find best swarm position and cost
-            if (p.bestCost < gBestParticle.bestCost)
-            {
-                gBestParticle.positionXi = p.pBestPi;
-                gBestParticle.bestCost = p.bestCost;
-            }
-            population.push_back(p);
-        }
-    }
-
     void backToBoundaries(Particle &particle, int iteration)
     {
         if (boundaryLow_ > particle.positionXi[iteration] || particle.positionXi[iteration] > boundaryUp_)
@@ -67,6 +50,28 @@ public:
           c1_(c1), c2_(c2), wStart_(wStart), wEnd_(wEnd), w_(wStart),
           vMax_(vMax), boundaryLow_(boundaryLow), boundaryUp_(boundaryUp)
     {
+    }
+
+    void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
+    {
+
+        //init gBest and push into population
+        initParticleRandom(gBestParticle);
+        population.push_back(gBestParticle);
+        //then start from 1
+        for (int i = 1; i < popSize_; i++)
+        {
+            Particle p;
+            initParticleRandom(p);
+
+            //find best swarm position and cost
+            if (p.bestCost < gBestParticle.bestCost)
+            {
+                gBestParticle.positionXi = p.pBestPi;
+                gBestParticle.bestCost = p.bestCost;
+            }
+            population.push_back(p);
+        }
     }
 
     void dimensionMove(Particle &currentParticle, Particle &gBestParticle, int d)
@@ -138,7 +143,6 @@ public:
         std::vector<Particle> population;
 
         Particle gBestParticle;
-        initParticleRandom(gBestParticle);
         initPopulationReturnBest(population, gBestParticle);
 
         std::vector<std::vector<double>> positions;

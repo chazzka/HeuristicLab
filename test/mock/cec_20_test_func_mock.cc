@@ -1,5 +1,8 @@
 #include <math.h>
 
+#define BOUNDARY_LOW -5.12
+#define BOUNDARY_UP 5.12
+
 double firstDejong(double *x, int d)
 {
     double sum = 0;

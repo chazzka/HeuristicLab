@@ -4,11 +4,33 @@
 #include "src/alg/PSONovA.cpp"
 
 //utils (and hence randomness) is NOT mocked!
-//neighboursK_, singleDimensionFes_, popSize_, dimension_, testFunction_...
-Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, 0, 0);
+
+TEST(initPopulationReturnBest, isBestReallyBest)
+{
+    int popSize = 4;
+    int dimension = 2;
+    Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+
+    std::vector<Particle> population;
+    Particle gBest;
+    psoNov.initPopulationReturnBest(population, gBest);
+
+    Particle testBest = population[1];
+    for (auto &p : population)
+    {
+        if (p.bestCost < testBest.bestCost)
+        {
+            testBest = p;
+        }
+    }
+
+    ASSERT_EQ(gBest.bestCost, testBest.bestCost);
+    ASSERT_EQ(gBest.positionXi, testBest.positionXi);
+}
 
 TEST(run, isCorrectNumberOfFes)
 {
+    Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     std::vector<result> res = psoNov.run(1, 1, 1, 1);
     ASSERT_EQ(res.size(), 12);
 }
@@ -16,7 +38,7 @@ TEST(run, isCorrectNumberOfFes)
 //getRo is tested in utils test
 TEST(initRo, isBestRoOK)
 {
-
+    Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     Particle test1;
     test1.positionXi = {1};
 

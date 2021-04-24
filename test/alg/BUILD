@@ -1,6 +1,6 @@
 cc_test(
-    name = "PSOtests",
-    srcs = glob(["**/PSO_test.cc"]),
+    name = "PSOtestsMock",
+    srcs = glob(["**/PSO_test_mock.cc"]),
     deps = [
         "//src/alg:PSO",
         "//test/mock:utilsMock",
@@ -8,6 +8,18 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "PSOtestsNoMock",
+    srcs = glob(["**/PSO_test_nomock.cc"]),
+    deps = [
+        "//src/alg:PSO",
+        "//src/utils:UtilsLib",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
+
 
 cc_test(
     name = "PSONovAtests",
@@ -30,6 +42,19 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+
+cc_test(
+    name = "PSONovCtests",
+    srcs = glob(["**/PSONovC_test.cc"]),
+    deps = [
+        "//src/alg:PSONovC",
+        "//src/utils:UtilsLib",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
+
 
 
 

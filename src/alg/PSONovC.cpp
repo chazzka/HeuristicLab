@@ -26,30 +26,6 @@ private:
     int maxHomogeneity_, neighboursK_, singleDimensionFes_, popSize_, dimension_, testFunction_;
     double c1_, c2_, wStart_, wEnd_, w_, vMax_, boundaryLow_, boundaryUp_;
 
-    void initParticleRandom(Particle &p)
-    {
-        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
-        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
-    }
-
-    void initPopulation(std::vector<Particle> &population, Particle &gBestParticle)
-    {
-        for (int i = 0; i < popSize_; i++)
-        {
-            Particle p;
-            initParticleRandom(p);
-
-            //find best swarm position and cost
-            if (p.bestCost < gBestParticle.bestCost)
-            {
-                gBestParticle.positionXi = p.pBestPi;
-                gBestParticle.bestCost = p.bestCost;
-            }
-            population.push_back(p);
-        }
-    }
-
     void backToBoundaries(Particle &particle, int iteration)
     {
         if (boundaryLow_ > particle.positionXi[iteration] || particle.positionXi[iteration] > boundaryUp_)
@@ -69,8 +45,37 @@ public:
     {
     }
 
+    void initParticleRandom(Particle &p)
+    {
+        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
+        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+    }
+
+    void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
+    {
+        //init gBest and push into population
+        initParticleRandom(gBestParticle);
+        population.push_back(gBestParticle);
+        //then start from 1
+        for (int i = 1; i < popSize_; i++)
+        {
+            Particle p;
+            initParticleRandom(p);
+
+            //find best swarm position and cost
+            if (p.bestCost < gBestParticle.bestCost)
+            {
+                gBestParticle.positionXi = p.pBestPi;
+                gBestParticle.bestCost = p.bestCost;
+            }
+            population.push_back(p);
+        }
+    }
+
     void dimensionMove(Particle &currentParticle, Particle &gBestParticle, int d)
     {
+
         double rp = utils::generateRandomDouble(0, 1);
         double rg = utils::generateRandomDouble(0, 1);
 
@@ -204,8 +209,7 @@ public:
         std::vector<Particle> population;
 
         Particle gBestParticle;
-        initParticleRandom(gBestParticle);
-        initPopulation(population, gBestParticle);
+        initPopulationReturnBest(population, gBestParticle);
 
         Particle &mostUnique = population[0];
         std::vector<std::vector<double>> positions;

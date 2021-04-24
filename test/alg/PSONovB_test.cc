@@ -4,37 +4,59 @@
 #include "src/alg/PSONovB.cpp"
 
 //utils (and hence randomness) is NOT mocked!
-//neighboursK_, singleDimensionFes_, popSize_, dimension_, testFunction_...
-Algorithm psoNov(4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, 0, 0);
+
+TEST(initPopulationReturnBest, isBestReallyBest)
+{
+    int popSize = 4;
+    int dimension = 2;
+    Algorithm psoNov(4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+
+    std::vector<Particle> population;
+    Particle gBest;
+    psoNov.initPopulationReturnBest(population, gBest);
+
+    Particle testBest = population[1];
+    for (auto &p : population)
+    {
+        if (p.bestCost < testBest.bestCost)
+        {
+            testBest = p;
+        }
+    }
+
+    ASSERT_EQ(gBest.bestCost, testBest.bestCost);
+    ASSERT_EQ(gBest.positionXi, testBest.positionXi);
+}
 
 TEST(run, isCorrectNumberOfFes)
 {
+    Algorithm psoNov(4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     std::vector<result> res = psoNov.run(1, 1, 1, 1);
     ASSERT_EQ(res.size(), 12);
 }
 
 TEST(recountRoGetMostUniqueByDimension, isMostUniqueOK)
 {
-
+    Algorithm psoNov(4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     Particle test1;
     test1.positionXi = {1, 101};
     test1.dimensionRo = {0, 0};
-    test1.dimensionBestRo = {0,0};
+    test1.dimensionBestRo = {0, 0};
 
     Particle test2;
     test2.positionXi = {1.1, 800000};
     test2.dimensionRo = {0, 0};
-    test2.dimensionBestRo = {0,0};
+    test2.dimensionBestRo = {0, 0};
 
     Particle test3;
     test3.positionXi = {100, 102};
     test3.dimensionRo = {0, 0};
-    test3.dimensionBestRo = {0,0};
+    test3.dimensionBestRo = {0, 0};
 
     Particle test4;
     test4.positionXi = {200, 103};
     test4.dimensionRo = {0, 0};
-    test4.dimensionBestRo = {0,0};
+    test4.dimensionBestRo = {0, 0};
 
     std::vector<Particle> population;
 
