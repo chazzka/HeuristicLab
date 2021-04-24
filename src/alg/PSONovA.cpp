@@ -33,7 +33,7 @@ private:
         cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
     }
 
-    void initPopulation(std::vector<Particle> &population, Particle &gBestParticle)
+    void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
     {
         for (int i = 0; i < popSize_; i++)
         {
@@ -139,7 +139,7 @@ public:
 
         Particle gBestParticle;
         initParticleRandom(gBestParticle);
-        initPopulation(population, gBestParticle);
+        initPopulationReturnBest(population, gBestParticle);
 
         std::vector<std::vector<double>> positions;
         initRo(population, positions);
