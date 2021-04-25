@@ -26,6 +26,13 @@ private:
     int maxHomogeneity_, neighboursK_, singleDimensionFes_, popSize_, dimension_, testFunction_;
     double c1_, c2_, wStart_, wEnd_, w_, vMax_, boundaryLow_, boundaryUp_;
 
+    void initParticleRandom(Particle &p)
+    {
+        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
+        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+    }
+
     void backToBoundaries(Particle &particle, int iteration)
     {
         if (boundaryLow_ > particle.positionXi[iteration] || particle.positionXi[iteration] > boundaryUp_)
@@ -36,6 +43,16 @@ private:
         }
     }
 
+    void getPositions(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    {
+        positions.clear();
+
+        for (auto &particle : population)
+        {
+            positions.push_back(particle.positionXi);
+        }
+    }
+
 public:
     Algorithm(int maxHomogeneity = 20, int neighboursK = 3, int singleDimensionFes = 5000, int popSize = 25, int dimension = 0, int testFunction = 0, double c1 = 1.496180, double c2 = 1.496180,
               double wStart = 0.9, double wEnd = 0.4, double vMax = 0.2, double boundaryLow = 0, double boundaryUp = 0)
@@ -43,13 +60,6 @@ public:
           c1_(c1), c2_(c2), wStart_(wStart), wEnd_(wEnd), w_(wStart),
           vMax_(vMax), boundaryLow_(boundaryLow), boundaryUp_(boundaryUp)
     {
-    }
-
-    void initParticleRandom(Particle &p)
-    {
-        std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
-        cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
     }
 
     void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
@@ -90,16 +100,6 @@ public:
         currentParticle.positionXi[d] = currentParticle.positionXi[d] + currentParticle.velocityVectorVi[d];
 
         backToBoundaries(currentParticle, d);
-    }
-
-    void getPositions(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
-    {
-        positions.clear();
-
-        for (auto &particle : population)
-        {
-            positions.push_back(particle.positionXi);
-        }
     }
 
     void initRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)

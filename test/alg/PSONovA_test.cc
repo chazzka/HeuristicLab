@@ -28,13 +28,6 @@ TEST(initPopulationReturnBest, isBestReallyBest)
     ASSERT_EQ(gBest.positionXi, testBest.positionXi);
 }
 
-TEST(run, isCorrectNumberOfFes)
-{
-    Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
-    std::vector<result> res = psoNov.run(1, 1, 1, 1);
-    ASSERT_EQ(res.size(), 12);
-}
-
 //getRo is tested in utils test
 TEST(initRo, isBestRoOK)
 {
@@ -66,4 +59,11 @@ TEST(initRo, isBestRoOK)
     ASSERT_EQ(population[1].ro, population[1].bestRo);
     ASSERT_EQ(population[2].ro, population[2].bestRo);
     ASSERT_EQ(population[3].ro, population[3].bestRo);
+}
+
+TEST(run, isCorrectNumberOfFes)
+{
+    Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+    std::vector<result> res = psoNov.run(1, 1, 1, 1);
+    ASSERT_EQ(res.size(), 12);
 }

@@ -43,6 +43,16 @@ private:
         }
     }
 
+    void getPositions(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    {
+        positions.clear();
+
+        for (auto &particle : population)
+        {
+            positions.push_back(particle.positionXi);
+        }
+    }
+
 public:
     Algorithm(int neighboursK = 3, int singleDimensionFes = 5000, int popSize = 25, int dimension = 0, int testFunction = 0, double c1 = 1.496180, double c2 = 1.496180,
               double wStart = 0.9, double wEnd = 0.4, double vMax = 0.2, double boundaryLow = 0, double boundaryUp = 0)
@@ -54,7 +64,6 @@ public:
 
     void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
     {
-
         //init gBest and push into population
         initParticleRandom(gBestParticle);
         population.push_back(gBestParticle);
@@ -90,16 +99,6 @@ public:
         currentParticle.positionXi[d] = currentParticle.positionXi[d] + currentParticle.velocityVectorVi[d];
 
         backToBoundaries(currentParticle, d);
-    }
-
-    void getPositions(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
-    {
-        positions.clear();
-
-        for (auto &particle : population)
-        {
-            positions.push_back(particle.positionXi);
-        }
     }
 
     void initRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)

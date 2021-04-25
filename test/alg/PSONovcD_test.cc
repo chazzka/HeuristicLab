@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "test/mock/cec_20_test_func_mock.cc" //first dejong mock.
 #include "src/utils/utils.cpp"
-#include "src/alg/PSONovC.cpp"
+#include "src/alg/PSONovD.cpp"
 
 //utils (and hence randomness) is NOT mocked!
 
@@ -9,11 +9,11 @@ TEST(initPopulationReturnBest, isBestReallyBest)
 {
     int popSize = 4;
     int dimension = 2;
-    Algorithm psoNovC(20, 4, 12, popSize, dimension, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+    Algorithm psoNovD(20, 4, 12, popSize, dimension, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
 
     std::vector<Particle> population;
     Particle gBest;
-    psoNovC.initPopulationReturnBest(population, gBest);
+    psoNovD.initPopulationReturnBest(population, gBest);
 
     Particle testBest = population[1];
     for (auto &p : population)
@@ -31,7 +31,7 @@ TEST(initPopulationReturnBest, isBestReallyBest)
 TEST(doNoveltyPopulationRun, isGBestBetter)
 {
 
-    Algorithm psoNovC(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+    Algorithm psoNovD(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
 
     Particle test1;
     test1.positionXi = {500, 500};
@@ -78,11 +78,11 @@ TEST(doNoveltyPopulationRun, isGBestBetter)
     Particle &mostUnique = population[3];
 
     std::vector<std::vector<double>> positions;
-    psoNovC.initRo(population, mostUnique, positions);
+    psoNovD.initRo(population, mostUnique, positions);
 
     for (int i = 0; i < population.size(); i++)
     {
-        psoNovC.doNoveltyPopulationRun(population, positions, mostUnique, gBestParticle, i);
+        psoNovD.doNoveltyPopulationRun(population, positions, mostUnique, gBestParticle, i);
     }
 
     std::vector<double> fsad = {1, 2};
@@ -104,7 +104,7 @@ TEST(doNoveltyPopulationRun, isGBestBetter)
 TEST(doClassicPopulationRun, isGBestBetter)
 {
 
-    Algorithm psoNovC(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+    Algorithm psoNovD(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
 
     Particle test1;
     test1.positionXi = {500, 500};
@@ -151,11 +151,11 @@ TEST(doClassicPopulationRun, isGBestBetter)
     Particle &mostUnique = population[3];
 
     std::vector<std::vector<double>> positions;
-    psoNovC.initRo(population, mostUnique, positions);
+    psoNovD.initRo(population, mostUnique, positions);
 
     for (int i = 0; i < population.size(); i++)
     {
-        psoNovC.doClassicPopulationRun(population, gBestParticle, i);
+        psoNovD.doClassicPopulationRun(population, gBestParticle, i);
     }
 
     std::vector<double> fsad = {1, 2};
@@ -176,7 +176,7 @@ TEST(doClassicPopulationRun, isGBestBetter)
 
 TEST(run, isCorrectNumberOfFes)
 {
-    Algorithm psoNovC(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
-    std::vector<result> res = psoNovC.run(1, 1, 1, 1);
+    Algorithm psoNovD(20, 4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
+    std::vector<result> res = psoNovD.run(1, 1, 1, 1);
     ASSERT_EQ(res.size(), 12);
 }
