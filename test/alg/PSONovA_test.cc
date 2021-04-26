@@ -29,20 +29,24 @@ TEST(initPopulationReturnBest, isBestReallyBest)
 }
 
 //getRo is tested in utils test
-TEST(initRo, isBestRoOK)
+TEST(evaluateRo, isBestRoOK)
 {
     Algorithm psoNov(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     Particle test1;
     test1.positionXi = {1};
+    test1.bestRo = 0;
 
     Particle test2;
     test2.positionXi = {1.1};
+    test2.bestRo = 0;
 
     Particle test3;
     test3.positionXi = {1.2};
+    test3.bestRo = 0;
 
     Particle test4;
     test4.positionXi = {500};
+    test4.bestRo = 0;
 
     std::vector<Particle> population;
 
@@ -53,7 +57,7 @@ TEST(initRo, isBestRoOK)
 
     std::vector<std::vector<double>> positions;
 
-    psoNov.initRo(population, positions);
+    psoNov.evaluateRo(population, positions);
 
     ASSERT_EQ(population[0].ro, population[0].bestRo);
     ASSERT_EQ(population[1].ro, population[1].bestRo);

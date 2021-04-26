@@ -28,40 +28,7 @@ TEST(initPopulationReturnBest, isBestReallyBest)
     ASSERT_EQ(gBest.positionXi, testBest.positionXi);
 }
 
-//getRo is tested in utils test
-TEST(initRo, isBestRoOK)
-{
-    Algorithm psoNovB(4, 12, 4, 1, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
-    Particle test1;
-    test1.positionXi = {1};
-
-    Particle test2;
-    test2.positionXi = {1.1};
-
-    Particle test3;
-    test3.positionXi = {1.2};
-
-    Particle test4;
-    test4.positionXi = {500};
-
-    std::vector<Particle> population;
-
-    population.push_back(test1);
-    population.push_back(test2);
-    population.push_back(test3);
-    population.push_back(test4);
-
-    std::vector<std::vector<double>> positions;
-
-    psoNovB.initRo(population, positions);
-
-    ASSERT_EQ(population[0].dimensionRo, population[0].dimensionBestRo);
-    ASSERT_EQ(population[1].dimensionRo, population[1].dimensionBestRo);
-    ASSERT_EQ(population[2].dimensionRo, population[2].dimensionBestRo);
-    ASSERT_EQ(population[3].dimensionRo, population[3].dimensionBestRo);
-}
-
-TEST(recountRoGetMostUniqueByDimension, isMostUniqueOK)
+TEST(evaluateRoGetMostUniqueByDimension, isMostUniqueOK)
 {
     Algorithm psoNovB(4, 12, 4, 2, 1, 1.496180, 1.496180, 0.9, 0.4, 0.2, BOUNDARY_LOW, BOUNDARY_UP);
     Particle test1;
@@ -94,9 +61,8 @@ TEST(recountRoGetMostUniqueByDimension, isMostUniqueOK)
     Particle &mostUnique = population[0];
 
     std::vector<std::vector<double>> positions;
-    psoNovB.initRo(population, positions);
 
-    psoNovB.recountRoGetMostUniqueByDimension(population, mostUnique, positions, 1);
+    psoNovB.evaluateRoGetMostUniqueByDimension(population, mostUnique, positions, 1);
 
     ASSERT_EQ(mostUnique.positionXi, test2.positionXi);
 }

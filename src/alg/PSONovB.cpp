@@ -28,9 +28,15 @@ private:
 
     void initParticleRandom(Particle &p)
     {
+        std::vector<double> zeros(dimension_, 0.0);
         std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+
+        p.positionXi = randomPosition;
+        p.velocityVectorVi = zeros;
+        p.pBestPi = randomPosition;
         cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+        p.dimensionRo = zeros;
+        p.dimensionBestRo = zeros;
     }
 
     void backToBoundaries(Particle &particle, int iteration)
@@ -101,22 +107,7 @@ public:
         backToBoundaries(currentParticle, d);
     }
 
-    void initRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
-    {
-        getPositions(population, positions);
-
-        for (int i = 0; i < popSize_; i++)
-        {
-            for (int j = 0; j < dimension_; j++)
-            {
-                double initialRo = utils::getRoOneDimension(population[i].positionXi, positions, neighboursK_, j);
-                population[i].dimensionRo.push_back(initialRo);
-                population[i].dimensionBestRo.push_back(initialRo);
-            }
-        }
-    }
-
-    void recountRoGetMostUniqueByDimension(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions, int d)
+    void evaluateRoGetMostUniqueByDimension(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions, int d)
     {
         getPositions(population, positions);
 
@@ -152,7 +143,6 @@ public:
 
         Particle &mostUnique = population[0];
         std::vector<std::vector<double>> positions;
-        initRo(population, positions);
 
         for (int g = 0; g < generations; g++)
         {
@@ -163,10 +153,10 @@ public:
                 for (int d = 0; d < dimensionsCount; d++)
                 {
                     int dice = utils::generateRandomInt(1, 6);
-                    if (dice < 3) //do novelty
-                    {
-                        recountRoGetMostUniqueByDimension(population, mostUnique, positions, d);
+                    if (dice < 3) //novelty
+                    {                                                
                         dimensionMove(currentParticle, mostUnique, d);
+                        evaluateRoGetMostUniqueByDimension(population, mostUnique, positions, d);
                     }
                     else
                     {

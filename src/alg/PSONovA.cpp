@@ -28,9 +28,15 @@ private:
 
     void initParticleRandom(Particle &p)
     {
+        std::vector<double> zeros(dimension_, 0.0);
         std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+
+        p.positionXi = randomPosition;
+        p.velocityVectorVi = zeros;
+        p.pBestPi = randomPosition;
         cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+        p.ro = 0.0;
+        p.bestRo = 0.0;
     }
 
     void backToBoundaries(Particle &particle, int iteration)
@@ -64,8 +70,6 @@ public:
 
     void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
     {
-
-        //init gBest and push into population
         initParticleRandom(gBestParticle);
         population.push_back(gBestParticle);
         //then start from 1
@@ -74,7 +78,6 @@ public:
             Particle p;
             initParticleRandom(p);
 
-            //find best swarm position and cost
             if (p.bestCost < gBestParticle.bestCost)
             {
                 gBestParticle.positionXi = p.pBestPi;
@@ -102,19 +105,7 @@ public:
         backToBoundaries(currentParticle, d);
     }
 
-    void initRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
-    {
-        getPositions(population, positions);
-
-        for (int i = 0; i < popSize_; i++)
-        {
-            double initialRo = utils::getRo(population[i].positionXi, positions, neighboursK_);
-            population[i].ro = initialRo;
-            population[i].bestRo = initialRo;
-        }
-    }
-
-    void recountRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
+    void evaluateRo(std::vector<Particle> &population, std::vector<std::vector<double>> &positions)
     {
 
         getPositions(population, positions);
@@ -146,7 +137,6 @@ public:
         initPopulationReturnBest(population, gBestParticle);
 
         std::vector<std::vector<double>> positions;
-        initRo(population, positions);
 
         for (int g = 0; g < generations; g++)
         {
@@ -165,7 +155,7 @@ public:
 
                 //novelty
                 double previousRo = currentParticle.bestRo;
-                recountRo(population, positions);
+                evaluateRo(population, positions);
                 if (currentParticle.bestRo > previousRo)
                 {
                     currentParticle.pBestPi = currentParticle.positionXi;

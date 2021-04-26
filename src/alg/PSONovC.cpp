@@ -28,9 +28,15 @@ private:
 
     void initParticleRandom(Particle &p)
     {
+        std::vector<double> zeros(dimension_, 0.0);
         std::vector<double> randomPosition = utils::generateRandomRange(dimension_, boundaryLow_, boundaryUp_);
-        p = {randomPosition, utils::generateRandomRange(dimension_, 0, 0), randomPosition};
+
+        p.positionXi = randomPosition;
+        p.velocityVectorVi = zeros;
+        p.pBestPi = randomPosition;
         cec20_test_func(p.pBestPi.data(), &p.bestCost, dimension_, 1, testFunction_);
+        p.ro = 0.0;
+        p.bestRo = 0.0;
     }
 
     void backToBoundaries(Particle &particle, int iteration)
@@ -64,10 +70,8 @@ public:
 
     void initPopulationReturnBest(std::vector<Particle> &population, Particle &gBestParticle)
     {
-        //init gBest and push into population
         initParticleRandom(gBestParticle);
         population.push_back(gBestParticle);
-        //then start from 1
         for (int i = 1; i < popSize_; i++)
         {
             Particle p;
@@ -102,23 +106,7 @@ public:
         backToBoundaries(currentParticle, d);
     }
 
-    void initRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
-    {
-        getPositions(population, positions);
-
-        for (int i = 0; i < popSize_; i++)
-        {
-            double initialRo = utils::getRo(population[i].positionXi, positions, neighboursK_);
-            population[i].ro = initialRo;
-            population[i].bestRo = initialRo;
-            if (population[i].ro > mostUnique.ro)
-            {
-                mostUnique = population[i];
-            }
-        }
-    }
-
-    void recountRo(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
+    void evaluateRoGetMostUnique(std::vector<Particle> &population, Particle &mostUnique, std::vector<std::vector<double>> &positions)
     {
 
         getPositions(population, positions);
@@ -132,7 +120,6 @@ public:
             }
             if (population[i].ro > mostUnique.ro)
             {
-                mostUnique.ro = population[i].ro;
                 mostUnique = population[i];
             }
         }
@@ -141,11 +128,13 @@ public:
     void doNoveltyPopulationRun(std::vector<Particle> &population, std::vector<std::vector<double>> &positions, Particle &mostUnique, Particle &gBestParticle, int i)
     {
         Particle &currentParticle = population[i];
-        recountRo(population, mostUnique, positions);
+
         for (int d = 0; d < dimension_; d++)
         {
             dimensionMove(currentParticle, mostUnique, d);
         }
+
+        evaluateRoGetMostUnique(population, mostUnique, positions);
 
         double newXiCost = 0;
         cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimension_, 1, testFunction_);
@@ -213,44 +202,40 @@ public:
 
         Particle &mostUnique = population[0];
         std::vector<std::vector<double>> positions;
-        initRo(population, mostUnique, positions);
 
         int novelty = 0;
 
         for (int g = 0; g < generations; g++)
         {
-
-            //C - na začátku populace vypneme novelty
+            //novelty turn off
             novelty = 0;
 
             for (int i = 0; i < population.size(); i++)
             {
 
-                //pokud jsou vysledky stejne
                 if (gBestParticle.bestCost == previousCost)
                 {
-                    //pokud nepouzivame novelty
                     if (novelty == 0)
                     {
+                        doClassicPopulationRun(population, gBestParticle, i);
+                        fezCounter++;
                         homogeneousCounter++;
-                        //a pokud jsou stejne uz 20 runů, musime nasadit novelty
+
                         if (homogeneousCounter > maxHomogeneity_)
                         {
-                            //std::cout << "doing novelty" << std::endl;
                             novelty = 1;
                             homogeneousCounter = 0;
                         }
                     }
-                }
-                //C - jinak nic, novelty vypneme az na zacatku dalsi populace
-
-                if (novelty)
-                {
-                    doNoveltyPopulationRun(population, positions, mostUnique, gBestParticle, i);
-                    fezCounter++;
+                    else
+                    {
+                        doNoveltyPopulationRun(population, positions, mostUnique, gBestParticle, i);
+                        fezCounter++;
+                    }
                 }
                 else
                 {
+                    novelty = 0;
                     doClassicPopulationRun(population, gBestParticle, i);
                     fezCounter++;
                 }
