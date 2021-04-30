@@ -155,8 +155,8 @@ public:
                     int dice = utils::generateRandomInt(1, 6);
                     if (dice < 3) //novelty
                     {                                                
-                        dimensionMove(currentParticle, mostUnique, d);
                         evaluateRoGetMostUniqueByDimension(population, mostUnique, positions, d);
+                        dimensionMove(currentParticle, mostUnique, d);                    
                     }
                     else
                     {

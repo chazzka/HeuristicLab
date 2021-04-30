@@ -130,11 +130,13 @@ public:
     {
         Particle &currentParticle = population[i];
 
+        evaluateRoGetMostUnique(population, mostUnique, positions);
+
         for (int d = 0; d < dimension_; d++)
         {
             dimensionMove(currentParticle, mostUnique, d);
         }
-        evaluateRoGetMostUnique(population, mostUnique, positions);
+        
 
         double newXiCost = 0;
         cec20_test_func(currentParticle.positionXi.data(), &newXiCost, dimension_, 1, testFunction_);

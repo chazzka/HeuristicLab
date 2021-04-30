@@ -21,11 +21,11 @@ const char *alg_name = "PSONovD";
 Algorithm alg;
 
 //CHOOSE NUMBER OF RUNS
-#define RUNS 5
+#define RUNS 30
 
 //OPTIONAL: COMMENT OUT ALGORITHMS YOU DON'T WANT TO RUN
 std::map<std::string, int> algorithms{
-	{"BendCigar", 1},
+	{"BentCigar", 1},
 	{"RotatedSchwefel", 2},
 	{"Lunacek", 3},
 	{"Rosenbrock", 4},
@@ -39,8 +39,8 @@ std::map<std::string, int> algorithms{
 
 //OPTIONAL: COMMENT OUT DIMENSIONS YOU DON'T WANT TO RUN (tested are 10,20)
 const int implementedDimensions[] = {
-	5,
-	//10,
+	//5,
+	10,
 	//15,
 	//20,
 	//30,
