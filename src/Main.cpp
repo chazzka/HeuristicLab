@@ -29,12 +29,12 @@ std::map<std::string, int> algorithms{
 	{"RotatedSchwefel", 2},
 	{"Lunacek", 3},
 	{"Rosenbrock", 4},
-	{"HybridOne", 5},
-	{"HybridOneTwo", 6},
-//	{"HybridOneThree", 7},
-	{"CompositionOne", 8},
-	{"CompositionTwo", 9},
-	{"CompositionThree", 10},
+	{"Hybrid1", 5},
+	{"Hybrid6", 6},
+//	{"Hybrid5", 7},
+	{"Composition2", 8},
+	{"Composition4", 9},
+	{"Composition5", 10},
 };
 
 //OPTIONAL: COMMENT OUT DIMENSIONS YOU DON'T WANT TO RUN (tested are 10,20)
