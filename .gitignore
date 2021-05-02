@@ -1,3 +1,7 @@
 /src/Main.exe
 /csv/*
 /bazel-*
+Main.obj
+src/Main.ilk
+src/Main.pdb
+vc140.pdb
