@@ -11,8 +11,8 @@ TEST(getEuclideanDistanceVector, checkDistance)
 
 TEST(getEuclideanDistanceDouble, checkDistance)
 {
-    double first = 1.0;
-    double second = 3.0;
+    double first = 1.1;
+    double second = 3.1;
     double res = utils::getEuclideanDistance(first, second);
     EXPECT_EQ(res, 2);
 }

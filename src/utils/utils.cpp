@@ -20,10 +20,7 @@ namespace utils
 
         double getEuclideanDistance(double from, double to)
         {
-
-            double sum = pow((to - from), 2);
-
-            return sqrt(sum);
+            return std::abs(to - from);
         }
     }
 
