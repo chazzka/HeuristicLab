@@ -40,11 +40,11 @@ namespace utils
         return unif(rng);
     }
 
-    std::vector<double> generateRandomRange(int size, double min, double max)
+    std::vector<double> generateRandomRange(size_t size, double min, double max)
     {
         std::vector<double> rndNumbers;
 
-        for (int index = 0; index < size; index++)
+        for (size_t index = 0; index < size; index++)
         {
             rndNumbers.push_back(generateRandomDouble(min, max));
         }
@@ -54,63 +54,57 @@ namespace utils
 
     //k - number of neihgbours
     //result - avg of distance Ro (bigger Ro = more unique)
-    double getRo(const std::vector<double> &current, const std::vector<std::vector<double>> &all, int k)
+    double getRo(const std::vector<double> &current, const std::vector<std::vector<double>> &all, size_t k)
     {
+        if (k == 0)
+            return 0;
 
         assert(k <= all.size());
         std::multiset<double, std::less<double>> euclideanSet;
 
         double sum = 0;
 
-        for (size_t i = 0; i < all.size(); i++)
+        for (auto other : all)
         {
-            euclideanSet.insert(getEuclideanDistance(current, all[i]));
+            euclideanSet.insert(getEuclideanDistance(current, other));
         }
 
         std::multiset<double>::iterator it = euclideanSet.begin();
         //begin from 1 - always ignore the first zero distance (self distance)
-        for (int i = 0; i <= k; ++i)
+        for (size_t i = 0; i < k; ++i)
         {
-            sum += *it++;
+            sum += *++it;
         }
 
-        if (k != 0)
-        {
-            return sum / k;
-        }
-        else
-            return 0;
+        return sum / k;
     }
 
     //k - number of neihgbours
     //d - dimension
     //result - avg of distance Ro (bigger Ro = more unique)
-    double getRoOneDimension(const std::vector<double> &current, const std::vector<std::vector<double>> &all, int k, int d)
+    double getRoOneDimension(const std::vector<double> &current, const std::vector<std::vector<double>> &all, size_t k, int d)
     {
+        if (k == 0)
+            return 0;
 
         assert(k <= all.size());
         std::multiset<double, std::less<double>> euclideanSet;
 
         double sum = 0;
 
-        for (size_t i = 0; i < all.size(); i++)
+        for (auto other: all)
         {
-            euclideanSet.insert(getEuclideanDistance(current[d], all[i][d]));
+            euclideanSet.insert(getEuclideanDistance(current[d], other[d]));
         }
 
         std::multiset<double>::iterator it = euclideanSet.begin();
         //begin from 1 - always ignore the first zero distance (self distance)
-        for (int i = 0; i <= k; ++i)
+        for (size_t i = 0; i < k; ++i)
         {
-            sum += *it++;
+            sum += *++it;
         }
 
-        if (k != 0)
-        {
-            return sum / k;
-        }
-        else
-            return 0;
+        return sum / k;
     }
 
 }
