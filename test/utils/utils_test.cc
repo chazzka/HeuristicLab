@@ -26,8 +26,15 @@ TEST(generateRandomDouble, isInRightDimensions)
 
 TEST(generateRandomInt, isInRightDimensions)
 {
+    std::random_device rd;
+    std::mt19937 rng(rd());
     double res = utils::generateRandomInt(8, 8);
     EXPECT_EQ(res, 8);
+
+    std::mt19937 rng2 = rng;
+    double res3 = utils::generateRandomInt(1, 100, rng);
+    double res4 = utils::generateRandomInt(1, 100, rng2);
+    EXPECT_EQ(res3, res4);
 }
 
 TEST(generateRandomRange, areItemsInRightDimensions)

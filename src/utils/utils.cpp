@@ -24,18 +24,18 @@ namespace utils
         }
     }
 
-    int generateRandomInt(int minIncluded, int maxIncluded)
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
+    int generateRandomInt(int minIncluded, int maxIncluded, std::mt19937 &rn = rng)
     {
-        std::random_device rd;
-        std::mt19937 rng(rd());
         std::uniform_int_distribution<int> uni(minIncluded, maxIncluded);
-        return uni(rng);
+        return uni(rn);
     }
 
     double generateRandomDouble(double minIncluded, double maxIncluded)
     {
-        std::random_device rd;
-        std::mt19937 rng(rd());
         std::uniform_real_distribution<double> unif(minIncluded, maxIncluded);
         return unif(rng);
     }
