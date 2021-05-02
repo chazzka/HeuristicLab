@@ -1,4 +1,5 @@
 #include <vector>
+#include <assert.h>
 
 struct result
 {
@@ -19,7 +20,7 @@ private:
     double CR_, F_, boundaryLow_, boundaryUp_;
 
 public:
-    Algorithm(int singleDimensionFes = 5000, int popSize = 50, int dimension = 0, int testFunction = 0,
+    Algorithm(int singleDimensionFes = 5000, int popSize = 25, int dimension = 0, int testFunction = 0,
               double CR = 0.8, double F = 0.5, double boundaryLow = 0, double boundaryUp = 0)
         : singleDimensionFes_(singleDimensionFes), popSize_(popSize), dimension_(dimension), testFunction_(testFunction),
           CR_(CR), F_(F), boundaryLow_(boundaryLow), boundaryUp_(boundaryUp)
@@ -28,7 +29,8 @@ public:
 
     std::vector<Agent> get3distinct(std::vector<Agent> populace, Agent jed)
     {
-
+        
+        assert(populace.size() > 2);
         int i = 0;
         for (Agent j : populace)
         {
@@ -54,6 +56,7 @@ public:
 
     std::vector<Agent> get2distinct(std::vector<Agent> populace, Agent jed)
     {
+        assert(populace.size() > 1);
         int i = 0;
         for (Agent j : populace)
         {

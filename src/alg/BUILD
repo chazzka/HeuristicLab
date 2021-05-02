@@ -29,3 +29,9 @@ cc_library(
     hdrs = glob(["**/PSONovD.cpp"]), #bazel needs to depend on headers
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "DE",
+    hdrs = glob(["**/DE.cpp"]), #bazel needs to depend on headers
+    visibility = ["//visibility:public"],
+)
