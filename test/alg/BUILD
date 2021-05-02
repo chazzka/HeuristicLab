@@ -66,6 +66,16 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "DEtestMock",
+    srcs = glob(["**/DE_test_mock.cc"]),
+    deps = [
+        "//src/alg:DE",
+        "//test/mock:utilsMock",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
 
 
 

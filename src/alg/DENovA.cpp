@@ -42,7 +42,7 @@ public:
 
     std::vector<Agent> get3distinct(std::vector<Agent> populace, Agent jed)
     {
-
+        assert(populace.size() > 2);
         int i = 0;
         for (Agent j : populace)
         {
@@ -68,6 +68,7 @@ public:
 
     std::vector<Agent> get2distinct(std::vector<Agent> populace, Agent jed)
     {
+        assert(populace.size() > 1);
         int i = 0;
         for (Agent j : populace)
         {
