@@ -189,7 +189,9 @@ public:
                 int R = utils::generateRandomInt(1, dimension_);
                 //Compute the agent's potentially new position y
                 std::vector<double> y;
-
+             
+                evaluateRoGetMostUnique(population, mostUnique, positions);
+                
                 for (int d = 0; d < dimension_; d++)
                 {
                     //pick a uniformly distributed random number ri
@@ -204,9 +206,7 @@ public:
                     {
                         y.push_back(population[j].position[d]);
                     }
-                }
-
-                evaluateRoGetMostUnique(population, mostUnique, positions);
+                }            
 
                 double yCost = 0;
                 cec20_test_func(y.data(), &yCost, dimension, 1, testFunction);
