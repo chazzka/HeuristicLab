@@ -77,5 +77,30 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "DENovA",
+    srcs = glob(["**/DENovA_test.cc"]),
+    deps = [
+        "//src/alg:DENovA",
+        "//test/mock:utilsMock",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
+
+
+cc_test(
+    name = "DENovB",
+    srcs = glob(["**/DENovB_test.cc"]),
+    deps = [
+        "//src/alg:DENovB",
+        "//test/mock:utilsMock",
+        "//test/mock:cec20Mock",
+        "@googletest//:gtest_main",
+    ],
+)
+
+
+
 
 

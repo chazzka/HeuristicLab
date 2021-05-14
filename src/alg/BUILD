@@ -35,3 +35,15 @@ cc_library(
     hdrs = glob(["**/DE.cpp"]), #bazel needs to depend on headers
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "DENovA",
+    hdrs = glob(["**/DENovA.cpp"]), #bazel needs to depend on headers
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "DENovB",
+    hdrs = glob(["**/DENovB.cpp"]), #bazel needs to depend on headers
+    visibility = ["//visibility:public"],
+)

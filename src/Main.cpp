@@ -14,10 +14,10 @@
 #include "cec20_test_func.cpp"
 
 //INCLUDE ALGORITHM
-#include "alg/PSONovD.cpp"
+#include "alg/DENovB.cpp"
 
 //choose nickname for it
-const char *alg_name = "PSONovD";
+const char *alg_name = "DENovB";
 Algorithm alg;
 
 //CHOOSE NUMBER OF RUNS
